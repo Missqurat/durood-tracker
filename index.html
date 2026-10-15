@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Durood Pak Tracker</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f3ec;--card:#fffdf8;--ink:#1f2a24;--mute:#6b7469;--acc:#1f6b4f;--acc2:#c9a24a;--line:#e4dfd2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a16;--card:#1a2420;--ink:#ece8dc;--mute:#9aa598;--acc:#4fb88c;--acc2:#d9b45c;--line:#2b3832}}
+:root[data-theme="dark"]{--bg:#121a16;--card:#1a2420;--ink:#ece8dc;--mute:#9aa598;--acc:#4fb88c;--acc2:#d9b45c;--line:#2b3832}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 2px;text-align:center}
+select{font:inherit;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+summary{cursor:pointer}
+.sub{text-align:center;color:var(--mute);font-size:.9rem;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.quote{text-align:center;font-style:italic;color:var(--acc);font-size:1.02rem}
+.big{font-size:2rem;font-weight:bold;text-align:center}
+.lbl{color:var(--mute);font-size:.85rem;text-align:center}
+.bar{height:14px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:width .5s}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
+.grid b{display:block;font-size:1.15rem}
+.grid span{font-size:.75rem;color:var(--mute)}
+h2{font-size:1.05rem;margin:0 0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-width:0}
+#amt{flex:1}
+button{font:inherit;padding:10px 14px;border:0;border-radius:10px;background:var(--acc);color:#fff;cursor:pointer}
+button.alt{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+button.x{background:none;color:var(--mute);padding:2px 8px}
+.ms{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.ms:last-child{border:0}
+.ms.done{color:var(--acc);font-weight:bold}
+.ms small{color:var(--mute);font-weight:normal}
+.log{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.note{font-size:.8rem;color:var(--mute);text-align:center;margin-top:10px}
+html{-webkit-text-size-adjust:100%}
+button,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+input{font-size:16px}
+button{min-height:46px;font-size:1rem}
+.hero{text-align:center}
+.hero .big{font-size:2.6rem;color:var(--acc);letter-spacing:.5px;word-break:break-all}
+.done-banner{display:none;background:var(--acc);color:#fff;border-radius:12px;padding:12px;margin-top:10px;font-weight:bold}
+.q4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.q4 button{padding:10px 4px}
+.hadith{font-size:.95rem;text-align:center}
+.hadith small{display:block;color:var(--mute);margin-top:6px}
+.dtrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.dtrow input{flex:1}
+.goalrow{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+@media (max-width:420px){main{padding:14px 10px 32px}.hero .big{font-size:2.2rem}.grid b{font-size:1rem}}
+</style>
+</head>
+<body>
+<main>
+<h1>﷽ Durood Pak Tracker</h1>
+<div class="sub">Gentle, steady, from the heart</div>
+<div class="sub" id="status" style="margin-top:-10px">Saved on this device. Download a backup now and then.</div>
+<div class="card hadith" id="gift" style="display:none"></div>
+
+<div class="card quote" id="quote"></div>
+
+<div class="card hero">
+  <div class="lbl" id="goallbl">Remaining to reach 1 crore</div>
+  <div class="big" id="left">1,00,00,000</div>
+  <div class="bar"><div id="fill"></div></div>
+  <div class="lbl"><span id="total">0</span> recited · <span id="pct">0</span>% complete</div>
+  <div class="done-banner" id="done">🌙 Alhamdulillah! Target achieved. May Allah accept it.</div>
+  <div class="grid">
+    <div><b id="today">0</b><span>Today / <span id="tgt"></span></span></div>
+    <div><b id="streak">0</b><span>Day streak</span></div>
+    <div><b id="eta">–</b><span>Est. finish</span></div>
+  </div>
+</div>
+
+<div class="card hadith" id="hadith"></div>
+
+<div class="card">
+  <h2>Log your count</h2>
+  <div class="dtrow"><span class="lbl">Date</span><input id="dt" type="date"></div>
+  <div class="row">
+    <input id="amt" type="number" min="1" inputmode="numeric" placeholder="e.g. 500">
+    <button id="add">Add</button>
+  </div>
+  <div class="q4">
+    <button class="alt" data-q="100">+100</button>
+    <button class="alt" data-q="500">+500</button>
+    <button class="alt" data-q="1000">+1000</button>
+    <button class="alt" data-q="3000">+3000</button>
+  </div>
+  <div class="goalrow">
+    <span class="lbl">Daily goal</span>
+    <input id="goal" type="number" min="100" step="100" inputmode="numeric" style="width:110px">
+    <span class="lbl">Raise only when it feels light</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Milestones</h2>
+  <div id="ms"></div>
+</div>
+
+<div class="card">
+  <details>
+    <summary><b>Gift maker</b> (for the person giving this)</summary>
+    <div style="margin-top:10px;display:grid;gap:8px">
+      <input id="gTo" placeholder="Recipient's name">
+      <input id="gFrom" placeholder="Your name">
+      <input id="gMsg" placeholder="Short message or dua">
+      <select id="gTotal"><option value="10000000">Goal: 1 crore</option><option value="1000000">Goal: 10 lakh</option><option value="100000">Goal: 1 lakh</option><option value="10000">Goal: 10,000</option></select>
+      <input id="gGoal" type="number" inputmode="numeric" placeholder="Daily goal (e.g. 3000)">
+      <button id="gMake">Create gift link</button>
+      <input id="glink" readonly placeholder="Your gift link appears here">
+      <div class="row"><button class="alt" id="gCopy">Copy link</button><button class="alt" id="gShare">Share</button></div>
+    </div>
+  </details>
+</div>
+
+<div class="card">
+  <h2>Backup</h2>
+  <div class="row">
+    <button class="alt" id="exp">Download backup</button>
+    <button class="alt" id="imp">Restore from backup</button>
+    <input id="file" type="file" accept=".json,application/json" style="display:none">
+  </div>
+  <div class="note" style="text-align:left">Your count is saved on this phone. Please download a backup file regularly, and keep it safe, in case the phone is lost or its data is cleared.</div>
+</div>
+
+<div class="card">
+  <h2>Recent days</h2>
+  <div id="log"></div>
+  <div class="note">Missed a day? No guilt. Just continue tomorrow.</div>
+</div>
+
+<div class="note"><br></div>
+</main>
+
+<script>
+var KEY="durood_gift_v1",CK="durood_gift_cfg";
+var QUOTES=[
+"This is love, not a quota.",
+"Every count is received. Every one.",
+"Tired today? Even a little, with a present heart, is a victory.",
+"Each Durood is a gift to the Beloved ﷺ, and it returns to you multiplied.",
+"Start small, stay consistent. You are not racing, you are loving.",
+"Presence of heart matters more than speed.",
+"Durood eases worries and opens doors. Keep knocking.",
+"Renew your niyyah: for Allah and His Messenger ﷺ.",
+"One steady step a day carries you across years.",
+"Look back, not only ahead. See how many blessings you have already sent.",
+"No one is watching but Allah, and that is enough.",
+"A small amount done daily is beloved to Allah."
+];
+var HADITH=[
+["Whoever sends one blessing upon me, Allah will send ten blessings upon him.","Sahih Muslim"],
+["The closest of people to me on the Day of Resurrection will be those who sent the most blessings upon me.","Tirmidhi (hasan)"],
+["Send blessings upon me, for your blessings reach me wherever you are.","Abu Dawud (sahih)"],
+["When a companion offered to devote all his supplication time to salawat, the Prophet ﷺ said: then your worries will be taken care of and your sins forgiven.","Tirmidhi (hasan)"],
+["Allah sends ten blessings on the one who sends one upon the Prophet ﷺ, erases ten of his sins, and raises him ten degrees.","Nasa'i (sahih)"],
+["The miser is the one in whose presence I am mentioned, yet he does not send blessings upon me.","Tirmidhi (hasan sahih)"],
+["Increase your blessings upon me on Friday, for they are presented to me.","Abu Dawud (sahih)"],
+["The most beloved deeds to Allah are those done consistently, even if small.","Bukhari and Muslim"],
+["Actions are judged by intentions, and each person gets what they intended.","Bukhari and Muslim"]
+];
+
+var cfg={to:"",from:"",msg:"",total:10000000,goal:3000};
+var state={goal:3000,log:{},updated:0};
+function $(id){return document.getElementById(id);}
+function fmt(n){return Number(n).toLocaleString("en-IN");}
+function key(d){var y=d.getFullYear(),m=d.getMonth()+1,dd=d.getDate();return y+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;}
+function words(n){if(n>=10000000&&n%10000000===0)return (n/10000000)+" crore";if(n>=100000&&n%100000===0)return (n/100000)+" lakh";return fmt(n);}
+function loadCfg(){
+  try{var c=localStorage.getItem(CK);if(c){var o=JSON.parse(c);for(var k in cfg){if(o[k]!==undefined)cfg[k]=o[k];}}}catch(e){}
+  var P=new URLSearchParams((location.hash||"").replace(/^#/,"")),ch=false;
+  ["to","from","msg"].forEach(function(k){if(P.has(k)){cfg[k]=P.get(k).slice(0,300);ch=true;}});
+  ["total","goal"].forEach(function(k){var v=Math.floor(Number(P.get(k)));if(v>=100){cfg[k]=v;ch=true;}});
+  if(ch){try{localStorage.setItem(CK,JSON.stringify(cfg));}catch(e){}}
+}
+function load(){try{var s=localStorage.getItem(KEY);if(s){var p=JSON.parse(s);if(p&&p.log){state=p;return;}}}catch(e){}state.goal=cfg.goal;}
+function save(){state.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){status("⚠️ Could not save on this device. Download a backup.");}}
+function status(t){$("status").textContent=t;}
+function mergeIn(r){
+  if(!r||typeof r.log!=="object")return;
+  Object.keys(r.log).forEach(function(k){var v=Number(r.log[k]);if(v>0&&(state.log[k]||0)<v){state.log[k]=v;}});
+}
+function ms(){var a=[],t=cfg.total;for(var i=1;i<=10;i++){a.push(Math.round(t*i/10));}return a;}
+
+function render(){
+  var T=cfg.total,keys=Object.keys(state.log),total=0;
+  keys.forEach(function(k){total+=state.log[k];});
+  var left=Math.max(0,T-total),pct=Math.min(100,total/T*100);
+  $("goallbl").textContent="Remaining to reach "+words(T);
+  $("left").textContent=fmt(left);
+  $("total").textContent=fmt(total);
+  $("pct").textContent=pct.toFixed(2);
+  $("fill").style.width=pct+"%";
+  $("done").style.display=left===0?"block":"none";
+  var today=state.log[key(new Date())]||0;
+  $("today").textContent=fmt(today);
+  $("tgt").textContent=fmt(state.goal);
+  $("goal").value=state.goal;
+  var d=new Date(),streak=0;
+  if(!state.log[key(d)]){d.setDate(d.getDate()-1);}
+  while(state.log[key(d)]){streak++;d.setDate(d.getDate()-1);}
+  $("streak").textContent=streak;
+  if(left===0){$("eta").textContent="Done";}
+  else{var e=new Date();e.setDate(e.getDate()+Math.ceil(left/state.goal));
+    $("eta").textContent=e.toLocaleDateString("en-GB",{month:"short",year:"numeric"});}
+  var h="";
+  ms().forEach(function(m,i){
+    var done=total>=m,lab=words(m)+(i===9?" (goal)":(i===4?" (halfway)":""));
+    h+='<div class="ms'+(done?' done':'')+'"><span>'+lab+'</span><span>'+(done?"✓ reached":"<small>"+fmt(m-total)+" away</small>")+'</span></div>';
+  });
+  $("ms").innerHTML=h;
+  var rec=keys.sort().slice(-7).reverse(),lh="";
+  if(!rec.length){lh='<div class="lbl">Nothing logged yet. Begin whenever you are ready.</div>';}
+  rec.forEach(function(k){lh+='<div class="log"><span>'+k+'</span><span>'+fmt(state.log[k])+' <button class="x" data-del="'+k+'" aria-label="Remove">✕</button></span></div>';});
+  $("log").innerHTML=lh;
+}
+function setTexts(){
+  var n=Math.floor(Date.now()/86400000);
+  $("quote").textContent="“"+QUOTES[n%QUOTES.length]+"”";
+  var h=HADITH[n%HADITH.length];
+  $("hadith").innerHTML="<b>Hadith of the day</b><br>“"+h[0]+"”<small>"+h[1]+"</small>";
+  if(cfg.to||cfg.msg||cfg.from){
+    var g=$("gift");g.style.display="block";g.innerHTML="";
+    var b=document.createElement("b");b.textContent=cfg.to?"A gift for "+cfg.to:"A gift for you";g.appendChild(b);
+    if(cfg.msg){g.appendChild(document.createElement("br"));g.appendChild(document.createTextNode("“"+cfg.msg+"”"));}
+    if(cfg.from){var f=document.createElement("small");f.textContent="— from "+cfg.from;g.appendChild(f);}
+  }
+}
+function addCount(n){
+  n=Math.floor(Number(n));if(!n||n<1)return;
+  var k=$("dt").value||key(new Date());
+  state.log[k]=(state.log[k]||0)+n;save();render();
+}
+async function exportBackup(){
+  var name="durood-backup-"+key(new Date())+".json",data=JSON.stringify({log:state.log,goal:state.goal,updated:state.updated});
+  try{var dl=(window.claude&&claude.use)?await claude.use("downloads"):null;
+    if(dl){await dl.save({filename:name,data:data});return;}
+  }catch(e){if(e&&e.code==="declined")return;}
+  try{var b=new Blob([data],{type:"application/json"}),a=document.createElement("a");
+    a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();}
+  catch(e){alert("Could not create the backup.");}
+}
+function makeLink(){
+  var P=new URLSearchParams();
+  if($("gTo").value.trim())P.set("to",$("gTo").value.trim());
+  if($("gFrom").value.trim())P.set("from",$("gFrom").value.trim());
+  if($("gMsg").value.trim())P.set("msg",$("gMsg").value.trim());
+  P.set("total",$("gTotal").value);
+  var g=Math.floor(Number($("gGoal").value));if(g>=100)P.set("goal",g);
+  $("glink").value=location.href.split("#")[0]+"#"+P.toString();
+}
+
+$("add").onclick=function(){addCount($("amt").value);$("amt").value="";};
+$("amt").onkeydown=function(e){if(e.key==="Enter"){$("add").click();}};
+document.addEventListener("click",function(e){
+  var t=e.target,q=t.getAttribute&&t.getAttribute("data-q");
+  if(q){addCount(q);return;}
+  var dl=t.getAttribute&&t.getAttribute("data-del");
+  if(dl&&confirm("Remove the entry for "+dl+"?")){delete state.log[dl];save();render();}
+});
+$("goal").onchange=function(){var g=Math.floor(Number($("goal").value));if(g>=100){state.goal=g;save();}render();};
+$("exp").onclick=exportBackup;
+$("imp").onclick=function(){$("file").click();};
+$("file").onchange=function(){
+  var f=$("file").files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var p=JSON.parse(r.result);if(!p||typeof p.log!=="object")throw 0;mergeIn(p);save();render();alert("Backup restored.");}
+    catch(e){alert("That file is not a valid backup.");}};
+  r.readAsText(f);$("file").value="";
+};
+$("gMake").onclick=makeLink;
+$("gCopy").onclick=function(){if(!$("glink").value)makeLink();var v=$("glink").value;
+  try{navigator.clipboard.writeText(v).then(function(){status("Link copied.");},function(){$("glink").select();});}catch(e){$("glink").select();}};
+$("gShare").onclick=function(){if(!$("glink").value)makeLink();var v=$("glink").value;
+  if(navigator.share){navigator.share({title:"Durood Pak Tracker",url:v}).catch(function(){});}else{$("gCopy").click();}};
+$("dt").value=key(new Date());$("dt").max=key(new Date());
+loadCfg();load();setTexts();render();
+</script>
+</body>
+</html>
